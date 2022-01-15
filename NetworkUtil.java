@@ -24,16 +24,16 @@ public class NetworkUtil {
         return cm.getActiveNetworkInfo();
     }
 
-    // 判断网络是否可用
-    public static boolean isAvailable(Context context) {
-        NetworkInfo info = getActiveNetworkInfo(context);
-        return info != null && info.isAvailable();
-    }
-
-    // 判断网络是否连接
+    // 判断网络是否连接,但连接成功不一定可用
     public static boolean isConnected(Context context) {
         NetworkInfo info = getActiveNetworkInfo(context);
         return info != null && info.isConnected();
+    }
+    
+    // 判断网络是否可用，前提是网络连接成功
+    public static boolean isAvailable(Context context) {
+        NetworkInfo info = getActiveNetworkInfo(context);
+        return info != null && info.isConnected() && info.getState() == NetworkInfo.State.CONNECTED;
     }
 
     // 判断网络是否是4G
@@ -46,8 +46,9 @@ public class NetworkUtil {
     public static boolean isWifiConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm != null && cm.getActiveNetworkInfo() != null
-                && cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
+        NetworkInfo info = getActiveNetworkInfo(context);
+        return cm != null && info != null
+                && info.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
     // 获取移动网络运营商名称
